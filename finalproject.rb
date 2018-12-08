@@ -38,8 +38,12 @@ elsif ARGV[0] == "-c" && ARGV[2] == "-f"
     puts "Getting file from customer server"
     Net::SCP.download!("#{$server}", "#{$user}", "#{$serverFolder}/#{$custFile}",
                        "#{$custFolder}/#{$curMonth}")
-    File.rename("/#{$custFolder}/#{$curMonth}/#{$custFile}", "/#{$custFolder}/#{$curMonth}/stupid.csv")
-    puts "File located at..."
+    # append the date to the file name
+    currentDate = Time.now.strftime("%Y-%m-%d")
+    custFilePath = "#{$custFolder}/#{$curMonth}/#{$custFile}"
+    FileUtils.mv(custFilePath, $custFile += ".#{currentDate}")
+    FileUtils.mv($custFile, custFilePath += ".#{currentDate}")
+    puts "File located at #{custFilePath}"
 else
     object = HelpClass.new
     object.usage
